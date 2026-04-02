@@ -1,0 +1,37 @@
+{
+  "name": "Kakeibo — مصاريفك",
+  "short_name": "Kakeibo",
+  "description": "تطبيق إدارة المصاريف الشخصية بالدرهم المغربي",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f0f1a",
+  "theme_color": "#1a1a2e",
+  "orientation": "portrait",
+  "lang": "ar",
+  "dir": "rtl",
+  "categories": ["finance", "productivity"],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "إضافة مصروف",
+      "short_name": "إضافة",
+      "description": "إضافة مصروف جديد بسرعة",
+      "url": "./index.html#add",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

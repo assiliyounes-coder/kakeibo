@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#1a1a2e" />
+  <meta name="description" content="تطبيق Kakeibo لإدارة مصاريفك الشخصية بالدرهم المغربي" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Kakeibo" />
+
+  <title>Kakeibo — مصاريفك</title>
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json" />
+  <!-- Favicon / Apple Touch -->
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+
+  <!-- Fonts: Tajawal (Arabic) + Syne (display) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════
+       TOAST NOTIFICATION
+  ══════════════════════════════════════════ -->
+  <div id="toast" class="toast" aria-live="polite"></div>
+
+  <!-- ══════════════════════════════════════════
+       APP SHELL
+  ══════════════════════════════════════════ -->
+  <div class="app-shell">
+
+    <!-- HEADER -->
+    <header class="app-header">
+      <div class="header-brand">
+        <span class="brand-icon">家</span>
+        <div>
+          <h1 class="brand-title">Kakeibo</h1>
+          <p class="brand-sub">إدارة مصاريفك اليومية</p>
+        </div>
+      </div>
+      <div class="header-month" id="currentMonth"></div>
+    </header>
+
+    <!-- ══════════════ DASHBOARD ══════════════ -->
+    <section class="dashboard">
+      <!-- Budget Card -->
+      <div class="card card--budget">
+        <div class="card-label">الميزانية الشهرية</div>
+        <div class="card-amount" id="budgetAmount">4,000 MAD</div>
+        <div class="progress-wrap">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="card-meta" id="progressMeta"></div>
+      </div>
+
+      <!-- Stats Row -->
+      <div class="stats-row">
+        <div class="stat-card stat--spent">
+          <div class="stat-icon">↓</div>
+          <div class="stat-label">مصروف</div>
+          <div class="stat-value" id="totalSpent">0</div>
+          <div class="stat-currency">MAD</div>
+        </div>
+        <div class="stat-card stat--remaining">
+          <div class="stat-icon">↑</div>
+          <div class="stat-label">متبقي</div>
+          <div class="stat-value" id="totalRemaining">4,000</div>
+          <div class="stat-currency">MAD</div>
+        </div>
+      </div>
+
+      <!-- Category Breakdown -->
+      <div class="category-breakdown">
+        <h3 class="section-title">التوزيع حسب الفئة</h3>
+        <div class="cat-grid" id="catGrid">
+          <!-- filled by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════ ADD FORM ══════════════ -->
+    <section class="add-section">
+      <h2 class="section-title">إضافة مصروف جديد</h2>
+
+      <div class="form-card">
+        <!-- Amount -->
+        <div class="field-group">
+          <label class="field-label" for="inputAmount">المبلغ (MAD)</label>
+          <div class="amount-wrap">
+            <input
+              id="inputAmount"
+              class="field-input field-input--amount"
+              type="number"
+              inputmode="decimal"
+              placeholder="0.00"
+              min="0"
+              step="0.01"
+            />
+            <span class="amount-badge">MAD</span>
+          </div>
+        </div>
+
+        <!-- Category -->
+        <div class="field-group">
+          <label class="field-label">الفئة</label>
+          <div class="cat-picker" id="catPicker">
+            <button type="button" class="cat-btn active" data-cat="Needs">
+              <span class="cat-emoji">🏠</span>
+              <span>Needs</span>
+              <span class="cat-desc">ضروريات</span>
+            </button>
+            <button type="button" class="cat-btn" data-cat="Wants">
+              <span class="cat-emoji">🛍️</span>
+              <span>Wants</span>
+              <span class="cat-desc">رغبات</span>
+            </button>
+            <button type="button" class="cat-btn" data-cat="Culture">
+              <span class="cat-emoji">📚</span>
+              <span>Culture</span>
+              <span class="cat-desc">ثقافة</span>
+            </button>
+            <button type="button" class="cat-btn" data-cat="Unexpected">
+              <span class="cat-emoji">⚡</span>
+              <span>Unexpected</span>
+              <span class="cat-desc">طارئ</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Note -->
+        <div class="field-group">
+          <label class="field-label" for="inputNote">ملاحظة (اختياري)</label>
+          <input
+            id="inputNote"
+            class="field-input"
+            type="text"
+            placeholder="وصف سريع..."
+            maxlength="100"
+          />
+        </div>
+
+        <!-- Submit -->
+        <button id="btnAdd" class="btn-add" type="button">
+          <span id="btnAddText">+ إضافة</span>
+          <span id="btnAddSpinner" class="spinner hidden"></span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ══════════════ EXPENSES LIST ══════════════ -->
+    <section class="list-section">
+      <div class="list-header">
+        <h2 class="section-title">آخر العمليات</h2>
+        <button id="btnRefresh" class="btn-icon" title="تحديث">⟳</button>
+      </div>
+
+      <div id="loadingList" class="loading-state">
+        <div class="loader"></div>
+        <p>جاري التحميل…</p>
+      </div>
+
+      <ul id="expenseList" class="expense-list" aria-label="قائمة المصاريف">
+        <!-- filled by JS -->
+      </ul>
+
+      <div id="emptyState" class="empty-state hidden">
+        <div class="empty-icon">📭</div>
+        <p>لا توجد مصاريف بعد</p>
+        <small>أضف أول مصروف لك ↑</small>
+      </div>
+    </section>
+
+  </div><!-- /app-shell -->
+
+  <script src="app.js"></script>
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(() => console.log('[PWA] Service Worker registered'))
+        .catch(err => console.warn('[PWA] SW error:', err));
+    }
+  </script>
+</body>
+</html>
