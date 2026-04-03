@@ -8,7 +8,7 @@
  * Remplacez cette URL par votre Google Apps Script Web App URL
  * ══════════════════════════════════════════════════════
  */
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbwzmxgTtu4bojhtE-bQm09Ajitl9y6qOu8CV4gokCd7KXgsOMwnfIRtoD3A1f4Onnc/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbziCmlNjfz6jFMmmRbGGUss25s_1k4C4dS0rtevUC83tnRD96XMahwZE7PbBx76IczqaQ/exec';
 
 /** Budget mensuel fixe en MAD */
 const MONTHLY_BUDGET = 4000;
