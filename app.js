@@ -101,43 +101,37 @@ function bindEvents() {
 /* ══════════════════════════════════════════════════
    ADD EXPENSE
 ══════════════════════════════════════════════════ */
+
 async function handleAdd() {
   const amountRaw = DOM.amount.value.trim();
   const note      = DOM.note.value.trim();
 
-  // Validation
+  /* validation */
   if (!amountRaw || isNaN(amountRaw) || parseFloat(amountRaw) <= 0) {
     shakeInput(DOM.amount);
     showToast('يرجى إدخال مبلغ صحيح', 'error');
-    DOM.amount.focus();
-    return;
+    DOM.amount.focus(); return;
   }
-
   const amount = parseFloat(parseFloat(amountRaw).toFixed(2));
 
   setLoading(true);
 
   try {
-    // POST via fetch — Apps Script web app
-    const response = await fetch(GAS_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' }, // avoid preflight CORS
-      body: JSON.stringify({
-        action:    'addExpense',
-        montant:   amount,
-        categorie: selectedCategory,
-        note:      note,
-      }),
-    });
+    /* ------------------------------
+     *  POST → GET   (CORS is solved)
+     * ------------------------------*/
+    const url = `${GAS_URL}?action=addExpense&montant=${amount}` +
+                 `&categorie=${selectedCategory}` +
+                 `&note=${encodeURIComponent(note)}`;
 
+    const response = await fetch(url);              // aucun header à envoyer
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
     const result = await response.json();
-
     if (result.status === 'ok') {
       resetForm();
       showToast('✅ تمت الإضافة بنجاح');
-      await loadExpenses(); // refresh list + dashboard
+      await loadExpenses();        // rafraîchit tout (liste + dashboard)
     } else {
       throw new Error(result.message || 'خطأ غير معروف');
     }
@@ -145,20 +139,17 @@ async function handleAdd() {
   } catch (err) {
     console.error('[ADD] Error:', err);
 
-    // ── Offline / Demo mode ──────────────────────
-    // إذا لم يتم ربط Apps Script بعد، نعمل locally
+    /* Fallback local (démo) */
     if (GAS_URL.includes('YOUR_SCRIPT_ID') || err.message.includes('Failed to fetch')) {
       const newExpense = {
         date:      new Date().toLocaleDateString('fr-MA'),
         montant:   amount,
         categorie: selectedCategory,
-        note:      note,
+        note:      note
       };
       expenses.unshift(newExpense);
       if (expenses.length > 20) expenses = expenses.slice(0, 20);
-      resetForm();
-      renderExpenses();
-      updateDashboard();
+      resetForm(); renderExpenses(); updateDashboard();
       showToast('✅ تمت الإضافة (وضع تجريبي)');
     } else {
       showToast('❌ خطأ في الإضافة: ' + err.message, 'error');
