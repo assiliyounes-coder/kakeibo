@@ -56,6 +56,16 @@ document.addEventListener('DOMContentLoaded', () => {
   renderCurrentMonth();
   bindEvents();
   loadExpenses();
+
+  // تحديث تلقائي كل 30 ثانية
+  setInterval(loadExpenses, 30000);
+
+  // تحديث عند العودة للتطبيق من الخلفية
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      loadExpenses();
+    }
+  });
 });
 
 /* ══════════════════════════════════════════════════
