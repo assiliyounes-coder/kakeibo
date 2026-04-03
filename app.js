@@ -8,10 +8,10 @@
  * Remplacez cette URL par votre Google Apps Script Web App URL
  * ══════════════════════════════════════════════════════
  */
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbxAgBHJp-esaokItk1ASIk6oS--1bpIxoTSkIw5ZP5C13eXsEOg0qylAw4WOYTmPNW8Mw/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbyurS3Jze3HO7FTwZ7tU0URY46jTd2zNq7FfTz_CdblUhMBQNr4e5n0VY9_7n7xiNSwCg/exec';
 
 /** Budget mensuel fixe en MAD */
-const MONTHLY_BUDGET = 4000;
+const MONTHLY_BUDGET = 6000;
 
 /** Icônes et couleurs par catégorie */
 const CATEGORIES = {
